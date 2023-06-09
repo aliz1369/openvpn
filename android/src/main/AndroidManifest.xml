@@ -1,4 +1,75 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
           package="com.reactnativeopenvpn">
+  <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <application>
+        <meta-data
+            android:name="android.content.APP_RESTRICTIONS"
+            android:resource="@xml/app_restrictions" />
+        <activity
+            android:name="de.blinkt.openvpn.activities.DisconnectVPN"
+            android:excludeFromRecents="true"
+            android:label="Disconnect"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".DisconnectVPN"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <service
+            android:name="de.blinkt.openvpn.core.OpenVPNService"
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:process=":openvpn"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="de.blinkt.openvpn.api.ExternalOpenVPNService"
+            android:process=":openvpn"
+            tools:ignore="ExportedService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="de.blinkt.openvpn.api.IOpenVPNAPIService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="de.blinkt.openvpn.core.OpenVPNStatusService"
+            android:exported="false"
+            android:process=":openvpn" />
+        <activity
+            android:name="de.blinkt.openvpn.api.GrantPermissionsActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="de.blinkt.openvpn.api.ConfirmDialog"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name="de.blinkt.externalcertprovider.SelectCertificateActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="de.blinkt.openvpn.api.ExternalCertificateConfiguration"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="de.blinkt.externalcertprovider.ExternalCertService"
+            tools:ignore="ExportedService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="de.blinkt.openvpn.api.ExternalCertificateProvider"/>
+            </intent-filter>
+        </service>
+    </application>
 </manifest>
